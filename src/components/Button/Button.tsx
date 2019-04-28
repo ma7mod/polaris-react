@@ -77,6 +77,9 @@ export type CombinedProps = Props & WithAppProviderProps;
 
 const DEFAULT_SIZE = 'medium';
 
+/**
+ * @uxpincomponent
+ */
 function Button({
   id,
   url,

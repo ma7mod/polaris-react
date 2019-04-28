@@ -12,6 +12,9 @@ export interface Props {
   fullWidth?: boolean;
 }
 
+/**
+ * @uxpinnamespace Card
+ */
 export default function Section({children, title, subdued, fullWidth}: Props) {
   const className = classNames(
     styles.Section,

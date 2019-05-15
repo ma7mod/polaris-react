@@ -37,7 +37,7 @@ export interface Props {
   onDismiss?(): void;
 }
 
-export default function Banner({
+export default React.memo(function Banner({
   icon,
   action,
   secondaryAction,
@@ -158,7 +158,7 @@ export default function Banner({
       </div>
     </div>
   );
-}
+});
 
 let index = 1;
 function uniqueID() {

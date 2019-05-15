@@ -4,7 +4,6 @@ import {classNames} from '@shopify/react-utilities/styles';
 import {navigationBarCollapsed} from '../../../../utilities/breakpoints';
 
 import NavigationContext from '../../context';
-import {WithAppProviderProps} from '../../../AppProvider';
 import Badge from '../../../Badge';
 import Icon, {Props as IconProps} from '../../../Icon';
 import Indicator from '../../../Indicator';
@@ -81,6 +80,38 @@ export default function Item({
   const {intl} = usePolaris();
   const {location, onNavigationDismiss} = React.useContext(NavigationContext);
   const [expanded, setExpanded] = React.useState(false);
+
+  const getClickHandler = React.useCallback(
+    (onClick: Props['onClick']) => {
+      return (event: React.MouseEvent<HTMLElement>) => {
+        const {currentTarget} = event;
+
+        if (currentTarget.getAttribute('href') === location) {
+          event.preventDefault();
+        }
+
+        if (
+          subNavigationItems &&
+          subNavigationItems.length > 0 &&
+          navigationBarCollapsed().matches
+        ) {
+          event.preventDefault();
+          setExpanded(!expanded);
+        } else if (onNavigationDismiss) {
+          onNavigationDismiss();
+          if (onClick && onClick !== onNavigationDismiss) {
+            onClick();
+          }
+          return;
+        }
+
+        if (onClick) {
+          onClick();
+        }
+      };
+    },
+    [onClick, location, subNavigationItems, expanded, onNavigationDismiss],
+  );
 
   React.useEffect(() => {
     navigationBarCollapsed().addListener(handleResize);
@@ -266,35 +297,6 @@ export default function Item({
     if (!navigationBarCollapsed().matches && expanded) {
       setExpanded(false);
     }
-  }
-
-  function getClickHandler(onClick: Props['onClick']) {
-    return (event: React.MouseEvent<HTMLElement>) => {
-      const {currentTarget} = event;
-
-      if (currentTarget.getAttribute('href') === location) {
-        event.preventDefault();
-      }
-
-      if (
-        subNavigationItems &&
-        subNavigationItems.length > 0 &&
-        navigationBarCollapsed().matches
-      ) {
-        event.preventDefault();
-        setExpanded(!expanded);
-      } else if (onNavigationDismiss) {
-        onNavigationDismiss();
-        if (onClick && onClick !== onNavigationDismiss) {
-          onClick();
-        }
-        return;
-      }
-
-      if (onClick) {
-        onClick();
-      }
-    };
   }
 }
 

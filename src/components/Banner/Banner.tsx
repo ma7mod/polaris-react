@@ -8,23 +8,13 @@ import {
   CircleInformationMajorTwotone,
 } from '@shopify/polaris-icons';
 
-import compose from '@shopify/react-compose';
-import {
-  Action,
-  DisableableAction,
-  LoadableAction,
-  WithContextTypes,
-} from '../../types';
+import {Action, DisableableAction, LoadableAction} from '../../types';
 import Button, {buttonFrom} from '../Button';
 import Heading from '../Heading';
 import ButtonGroup from '../ButtonGroup';
 import UnstyledLink from '../UnstyledLink';
 import Icon, {Props as IconProps} from '../Icon';
-import WithinContentContext, {
-  WithinContentContextType,
-} from '../WithinContentContext';
-import withContext from '../WithContext';
-import {withAppProvider, WithAppProviderProps} from '../AppProvider';
+import WithinContentContext from '../WithinContentContext';
 
 import styles from './Banner.scss';
 
@@ -47,135 +37,127 @@ export interface Props {
   onDismiss?(): void;
 }
 
-export type CombinedProps = Props & WithContextTypes<WithinContentContextType>;
+export default function Banner({
+  icon,
+  action,
+  secondaryAction,
+  title,
+  children,
+  status,
+  onDismiss,
+}: Props) {
+  const {withinContentContainer} = React.useContext(WithinContentContext);
+  let color: IconProps['color'];
+  let defaultIcon: IconProps['source'];
+  let ariaRoleType = 'status';
 
-export class Banner extends React.PureComponent<CombinedProps, never> {
-  render() {
-    const {
-      icon,
-      action,
-      secondaryAction,
-      title,
-      children,
-      status,
-      onDismiss,
-      context: {withinContentContainer},
-    } = this.props;
+  switch (status) {
+    case 'success':
+      color = 'greenDark';
+      defaultIcon = CircleTickMajorTwotone;
+      break;
+    case 'info':
+      color = 'tealDark';
+      defaultIcon = CircleInformationMajorTwotone;
+      break;
+    case 'warning':
+      color = 'yellowDark';
+      defaultIcon = CircleAlertMajorTwotone;
+      ariaRoleType = 'alert';
+      break;
+    case 'critical':
+      color = 'redDark';
+      defaultIcon = CircleDisabledMajorTwotone;
+      ariaRoleType = 'alert';
+      break;
+    default:
+      color = 'inkLighter';
+      defaultIcon = FlagMajorTwotone;
+  }
+  const className = classNames(
+    styles.Banner,
+    status && styles[variationName('status', status)],
+    onDismiss && styles.hasDismiss,
+    withinContentContainer ? styles.withinContentContainer : styles.withinPage,
+  );
 
-    let color: IconProps['color'];
-    let defaultIcon: IconProps['source'];
-    let ariaRoleType = 'status';
+  const id = uniqueID();
+  const iconName = icon || defaultIcon;
 
-    switch (status) {
-      case 'success':
-        color = 'greenDark';
-        defaultIcon = CircleTickMajorTwotone;
-        break;
-      case 'info':
-        color = 'tealDark';
-        defaultIcon = CircleInformationMajorTwotone;
-        break;
-      case 'warning':
-        color = 'yellowDark';
-        defaultIcon = CircleAlertMajorTwotone;
-        ariaRoleType = 'alert';
-        break;
-      case 'critical':
-        color = 'redDark';
-        defaultIcon = CircleDisabledMajorTwotone;
-        ariaRoleType = 'alert';
-        break;
-      default:
-        color = 'inkLighter';
-        defaultIcon = FlagMajorTwotone;
-    }
-    const className = classNames(
-      styles.Banner,
-      status && styles[variationName('status', status)],
-      onDismiss && styles.hasDismiss,
-      withinContentContainer
-        ? styles.withinContentContainer
-        : styles.withinPage,
-    );
+  let headingMarkup: React.ReactNode = null;
+  let headingID: string | undefined;
 
-    const id = uniqueID();
-    const iconName = icon || defaultIcon;
-
-    let headingMarkup: React.ReactNode = null;
-    let headingID: string | undefined;
-
-    if (title) {
-      headingID = `${id}Heading`;
-      headingMarkup = (
-        <div className={styles.Heading} id={headingID}>
-          <Heading element="p">{title}</Heading>
-        </div>
-      );
-    }
-
-    const buttonSizeValue = withinContentContainer ? 'slim' : undefined;
-
-    const secondaryActionMarkup = secondaryAction
-      ? secondaryActionFrom(secondaryAction)
-      : null;
-
-    const actionMarkup = action ? (
-      <div className={styles.Actions}>
-        <ButtonGroup>
-          <div className={styles.PrimaryAction}>
-            {buttonFrom(action, {outline: true, size: buttonSizeValue})}
-          </div>
-          {secondaryActionMarkup}
-        </ButtonGroup>
-      </div>
-    ) : null;
-
-    let contentMarkup = null;
-    let contentID: string | undefined;
-
-    if (children || actionMarkup) {
-      contentID = `${id}Content`;
-      contentMarkup = (
-        <div className={styles.Content} id={contentID}>
-          {children}
-          {actionMarkup}
-        </div>
-      );
-    }
-
-    const dismissButton = onDismiss ? (
-      <div className={styles.Dismiss}>
-        <Button
-          plain
-          icon="cancelSmall"
-          onClick={onDismiss}
-          accessibilityLabel="Dismiss notification"
-        />
-      </div>
-    ) : null;
-
-    return (
-      <div
-        className={className}
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-        tabIndex={0}
-        role={ariaRoleType}
-        aria-live="polite"
-        onMouseUp={handleMouseUp}
-        aria-labelledby={headingID}
-        aria-describedby={contentID}
-      >
-        {dismissButton}
-        <div className={styles.Ribbon}>
-          <Icon source={iconName} color={color} backdrop />
-        </div>
-        <div>
-          {headingMarkup}
-          {contentMarkup}
-        </div>
+  if (title) {
+    headingID = `${id}Heading`;
+    headingMarkup = (
+      <div className={styles.Heading} id={headingID}>
+        <Heading element="p">{title}</Heading>
       </div>
     );
   }
+
+  const buttonSizeValue = withinContentContainer ? 'slim' : undefined;
+
+  const secondaryActionMarkup = secondaryAction
+    ? secondaryActionFrom(secondaryAction)
+    : null;
+
+  const actionMarkup = action ? (
+    <div className={styles.Actions}>
+      <ButtonGroup>
+        <div className={styles.PrimaryAction}>
+          {buttonFrom(action, {outline: true, size: buttonSizeValue})}
+        </div>
+        {secondaryActionMarkup}
+      </ButtonGroup>
+    </div>
+  ) : null;
+
+  let contentMarkup = null;
+  let contentID: string | undefined;
+
+  if (children || actionMarkup) {
+    contentID = `${id}Content`;
+    contentMarkup = (
+      <div className={styles.Content} id={contentID}>
+        {children}
+        {actionMarkup}
+      </div>
+    );
+  }
+
+  const dismissButton = onDismiss ? (
+    <div className={styles.Dismiss}>
+      <Button
+        plain
+        icon="cancelSmall"
+        onClick={onDismiss}
+        accessibilityLabel="Dismiss notification"
+      />
+    </div>
+  ) : null;
+
+  return (
+    <div
+      className={className}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      tabIndex={0}
+      role={ariaRoleType}
+      aria-live="polite"
+      onMouseUp={handleMouseUp}
+      aria-labelledby={headingID}
+      aria-describedby={contentID}
+    >
+      {dismissButton}
+      <div className={styles.Ribbon}>
+        <Icon source={iconName} color={color} backdrop />
+      </div>
+      <div>
+        {headingMarkup}
+        {contentMarkup}
+      </div>
+    </div>
+  );
 }
 
 let index = 1;
@@ -206,10 +188,3 @@ function secondaryActionFrom(action: Action) {
     </button>
   );
 }
-
-export default compose<Props>(
-  withContext<Props, WithAppProviderProps, WithinContentContextType>(
-    WithinContentContext.Consumer,
-  ),
-  withAppProvider(),
-)(Banner);

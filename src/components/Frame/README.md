@@ -283,7 +283,33 @@ class FrameExample extends React.Component {
 
     return (
       <div style={{height: '500px'}}>
-        <AppProvider theme={theme}>
+        <AppProvider
+          theme={theme}
+          i18n={{
+            Polaris: {
+              Avatar: {
+                label: 'Avatar',
+                labelWithInitials: 'Avatar with initials {initials}',
+              },
+              ContextualSaveBar: {
+                save: 'Save',
+                discard: 'Discard',
+              },
+              TextField: {
+                characterCount: '{count} characters',
+              },
+              Modal: {
+                iFrameTitle: 'body markup',
+              },
+              Frame: {
+                skipToContent: 'Skip to content',
+                Navigation: {
+                  closeMobileNavigationLabel: 'Close navigation',
+                },
+              },
+            },
+          }}
+        >
           <Frame
             topBar={topBarMarkup}
             navigation={navigationMarkup}

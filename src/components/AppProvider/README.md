@@ -38,7 +38,21 @@ The app provider component is required to use Polaris. Without it, the component
 AppProvider works by default without any additional options passed to it.
 
 ```jsx
-<AppProvider>
+<AppProvider
+  i18n={{
+    Polaris: {
+      ResourceList: {
+        sortingLabel: 'Sort by',
+        defaultItemSingular: 'item',
+        defaultItemPlural: 'items',
+        showing: 'Showing {itemsCount} {resource}',
+      },
+      Common: {
+        checkbox: 'checkbox',
+      },
+    },
+  }}
+>
   <Page>
     <Card>
       <ResourceList
@@ -78,7 +92,7 @@ AppProvider works by default without any additional options passed to it.
 
 ### With i18n object
 
-With an `i18n` object, the app provider component will override default English translations.
+With an `i18n` object, the app provider component will provide these translations to polaris component. For usage see [using i18n](/components/structure/app-provider#using-translations)
 
 ```jsx
 <AppProvider
@@ -149,7 +163,7 @@ class ProviderLinkExample extends React.Component {
     };
 
     return (
-      <AppProvider linkComponent={CustomLinkComponent}>
+      <AppProvider linkComponent={CustomLinkComponent} i18n={{}}>
         <Page
           breadcrumbs={[{content: 'Products', url: '#'}]}
           title="Jar With Lock-Lid"
@@ -237,7 +251,18 @@ class ProviderThemeExample extends React.Component {
 
     return (
       <div style={{height: '250px'}}>
-        <AppProvider theme={theme}>
+        <AppProvider
+          theme={theme}
+          i18n={{
+            Polaris: {
+              Frame: {skipToContent: 'Skip to content'},
+              ContextualSaveBar: {
+                save: 'Save',
+                discard: 'Discard',
+              },
+            },
+          }}
+        >
           <Frame topBar={topBarMarkup}>
             {contextualSaveBarMarkup}
             {pageMarkup}
@@ -327,7 +352,20 @@ class ProviderThemeExample extends React.Component {
 
     return (
       <div style={{height: '250px'}}>
-        <AppProvider theme={theme}>
+        <AppProvider
+          theme={theme}
+          i18n={{
+            Polaris: {
+              Frame: {
+                skipToContent: 'Skip to content',
+              },
+              ContextualSaveBar: {
+                save: 'Save',
+                discard: 'Discard',
+              },
+            },
+          }}
+        >
           <Frame topBar={topBarMarkup}>
             {contextualSaveBarMarkup}
             {pageMarkup}
@@ -353,7 +391,7 @@ When using Polaris, you don’t need to go through the initialization of the Sho
 
 ```jsx
 ReactDOM.render(
-  <AppProvider apiKey="YOUR_API_KEY" shopOrigin="SHOP_ORIGIN">
+  <AppProvider apiKey="YOUR_API_KEY" shopOrigin="SHOP_ORIGIN" i18n={{}}>
     <ResourcePicker
       resourceType="Product"
       open={this.state.open}
@@ -365,6 +403,19 @@ ReactDOM.render(
     />
   </AppProvider>,
 );
+```
+
+---
+
+## Using translations
+
+When using Polaris, you are able to import translations from over 10 different langauges and consume them through the `i18n` prop.
+
+```jsx
+import fr from '@shopify/polaris/locales/fr.json';
+...
+<AppProvider i18n={fr}>
+...
 ```
 
 ---
@@ -396,7 +447,7 @@ class MyApp extends React.Component {
 }
 
 render(
-  <AppProvider apiKey="YOUR_APP_API_KEY">
+  <AppProvider apiKey="YOUR_APP_API_KEY" i18n={{}}>
     <MyApp />
   </AppProvider>,
   document.querySelector('#app'),

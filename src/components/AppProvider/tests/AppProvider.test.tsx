@@ -15,7 +15,7 @@ describe('<AppProvider />', () => {
     const LinkComponent = () => <div />;
 
     const wrapper = mountWithAppProvider(
-      <AppProvider>
+      <AppProvider i18n={{}}>
         <Child />
       </AppProvider>,
     );

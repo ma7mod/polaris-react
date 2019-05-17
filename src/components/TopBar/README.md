@@ -230,7 +230,7 @@ class TopBarExample extends React.Component {
 
     return (
       <div style={{height: '250px'}}>
-        <AppProvider theme={theme}>
+        <AppProvider theme={theme} i18n={{}}>
           <Frame topBar={topBarMarkup} />
         </AppProvider>
       </div>
@@ -352,7 +352,18 @@ class TopBarExample extends React.Component {
 
     return (
       <div style={{height: '250px'}}>
-        <AppProvider theme={theme}>
+        <AppProvider
+          theme={theme}
+          i18n={{
+            Polaris: {
+              Frame: {skipToContent: 'Skip to content'},
+              Avatar: {
+                label: 'Avatar',
+                labelWithInitials: 'Avatar with initials {initials}',
+              },
+            },
+          }}
+        >
           <Frame topBar={topBarMarkup} />
         </AppProvider>
       </div>

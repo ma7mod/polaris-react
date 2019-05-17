@@ -3,6 +3,7 @@ import * as Polaris from '../src';
 import {checkA11y} from '@storybook/addon-a11y';
 import {storiesOf} from '@storybook/react';
 import Playground from '../playground/Playground';
+import en from '../locales/en.json';
 
 function percyOptions(custom = {}) {
   const defaults = {skip: true, widths: [375, 1280]};
@@ -71,7 +72,7 @@ export function addPlaygroundStory(playgroundModule) {
 function AppProviderDecorator(story) {
   return (
     <div style={{padding: '8px'}}>
-      <Polaris.AppProvider>{story()}</Polaris.AppProvider>
+      <Polaris.AppProvider i18n={en}>{story()}</Polaris.AppProvider>
     </div>
   );
 }
